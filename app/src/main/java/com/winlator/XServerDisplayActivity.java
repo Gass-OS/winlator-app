@@ -268,12 +268,51 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         setupUI();
 
         Executors.newSingleThreadExecutor().execute(() -> {
-            if (!isGenerateWineprefix()) {
-                setupWineSystemFiles();
-                extractGraphicsDriverFiles();
-                changeWineAudioDriver();
+            try {
+                if (!isGenerateWineprefix()) {
+                    preloaderDialog.setMessageOnUiThread(R.string.updating_system_files);
+                    setupWineSystemFiles();
+
+                    preloaderDialog.setMessageOnUiThread(R.string.starting_up);
+                    extractGraphicsDriverFiles();
+                    changeWineAudioDriver();
+                }
+
+                preloaderDialog.setMessageOnUiThread(R.string.starting_up);
+                setupXEnvironment();
             }
-            setupXEnvironment();
+            catch (Exception | LinkageError error) {
+                android.util.Log.e("XServerDisplay",
+                        "Desktop startup failed", error);
+
+                if (environment != null) {
+                    try {
+                        environment.stopEnvironmentComponents();
+                    }
+                    catch (Throwable stopError) {
+                        android.util.Log.e("XServerDisplay",
+                                "Failed to stop partially started environment",
+                                stopError);
+                    }
+                }
+
+                runOnUiThread(() -> {
+                    preloaderDialog.close();
+
+                    String detail = error.getMessage();
+                    if (detail == null || detail.trim().isEmpty()) {
+                        detail = error.getClass().getSimpleName();
+                    }
+
+                    android.widget.Toast.makeText(
+                            XServerDisplayActivity.this,
+                            "Desktop startup failed: " + detail,
+                            android.widget.Toast.LENGTH_LONG
+                    ).show();
+
+                    if (!isFinishing() && !isDestroyed()) finish();
+                });
+            }
         });
     }
 
