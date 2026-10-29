@@ -254,12 +254,35 @@ public class ContainerDetailFragment extends Fragment {
 
                     preloaderDialog.show(R.string.creating_container);
                     manager.createContainerAsync(data, (container) -> {
-                        if (container != null) {
+                        try {
+                            if (container == null) {
+                                android.widget.Toast.makeText(
+                                    requireContext(),
+                                    "Container creation failed. Check logcat for ContainerManager errors.",
+                                    android.widget.Toast.LENGTH_LONG
+                                ).show();
+                                return;
+                            }
+
                             this.container = container;
                             saveWineRegistryKeys(view);
+
+                            if (getActivity() != null) {
+                                getActivity().onBackPressed();
+                            }
                         }
-                        preloaderDialog.close();
-                        getActivity().onBackPressed();
+                        catch (Throwable error) {
+                            android.util.Log.e("ContainerDetail",
+                                "Container setup failed.", error);
+                            android.widget.Toast.makeText(
+                                requireContext(),
+                                "Container setup failed. Check logcat for details.",
+                                android.widget.Toast.LENGTH_LONG
+                            ).show();
+                        }
+                        finally {
+                            preloaderDialog.close();
+                        }
                     });
                 }
             }

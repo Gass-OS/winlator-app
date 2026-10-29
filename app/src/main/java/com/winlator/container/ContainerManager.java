@@ -72,10 +72,31 @@ public class ContainerManager {
     }
 
     public void createContainerAsync(final JSONObject data, Callback<Container> callback) {
-        final Handler handler = new Handler();
+        final Handler handler = new Handler(android.os.Looper.getMainLooper());
         Executors.newSingleThreadExecutor().execute(() -> {
-            final Container container = createContainer(data);
-            handler.post(() -> callback.call(container));
+            Container result = null;
+            try {
+                result = createContainer(data);
+                if (result == null) {
+                    android.util.Log.e("ContainerManager",
+                        "Container creation failed: creation returned null.");
+                }
+            }
+            catch (Throwable error) {
+                android.util.Log.e("ContainerManager",
+                    "Unexpected error while creating container.", error);
+            }
+
+            final Container createdContainer = result;
+            handler.post(() -> {
+                try {
+                    callback.call(createdContainer);
+                }
+                catch (Throwable error) {
+                    android.util.Log.e("ContainerManager",
+                        "Container creation callback failed.", error);
+                }
+            });
         });
     }
 
