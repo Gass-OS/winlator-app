@@ -61,7 +61,7 @@ public class ContainerManager {
                 }
             }
         }
-        catch (JSONException e) {}
+        catch (JSONException e) { android.util.Log.e("ContainerManager","JSON error",e);}
     }
 
     public void activateContainer(Container container) {
@@ -122,7 +122,7 @@ public class ContainerManager {
             data.put("id", id);
 
             File containerDir = new File(homeDir, RootFS.USER+"-"+id);
-            if (!containerDir.mkdirs()) return null;
+            if (!containerDir.mkdirs()) { android.util.Log.e("ContainerManager","mkdirs failed: "+containerDir); return null; }
 
             Container container = new Container(id);
             container.setRootDir(containerDir);
@@ -132,6 +132,7 @@ public class ContainerManager {
             if (!isMainWineVersion) container.setWineVersion(data.getString("wineVersion"));
 
             if (!extractContainerPatternFile(container.getWineVersion(), containerDir)) {
+                android.util.Log.e("ContainerManager","pattern extraction failed, wine="+container.getWineVersion()+" dir="+containerDir);
                 FileUtils.delete(containerDir);
                 return null;
             }
@@ -141,7 +142,7 @@ public class ContainerManager {
             containers.add(container);
             return container;
         }
-        catch (JSONException e) {}
+        catch (JSONException e) { android.util.Log.e("ContainerManager","JSON error",e);}
         return null;
     }
 
@@ -275,7 +276,7 @@ public class ContainerManager {
                     copyCommonDlls("x86_64-windows", "system32", commonDlls, containerDir);
                     copyCommonDlls("i386-windows", "syswow64", commonDlls, containerDir);
                 }
-                catch (JSONException e) {
+                catch (JSONException e) { android.util.Log.e("ContainerManager","JSON error",e);
                     return false;
                 }
             }

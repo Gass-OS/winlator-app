@@ -41,7 +41,7 @@ public abstract class TarCompressorUtils {
             }
             tar.closeArchiveEntry();
         }
-        catch (Exception e) {}
+        catch (Exception e) { android.util.Log.e("TarCompressor","extract/read failed",e);}
     }
 
     private static void addLinkFile(ArchiveOutputStream tar, File file, String entryName) {
@@ -51,7 +51,7 @@ public abstract class TarCompressorUtils {
             tar.putArchiveEntry(entry);
             tar.closeArchiveEntry();
         }
-        catch (Exception e) {}
+        catch (Exception e) { android.util.Log.e("TarCompressor","extract/read failed",e);}
     }
 
     private static void addDirectory(ArchiveOutputStream tar, File folder, String basePath) throws IOException {
@@ -101,7 +101,7 @@ public abstract class TarCompressorUtils {
             }
             tar.finish();
         }
-        catch (IOException e) {}
+        catch (IOException e) { android.util.Log.e("TarCompressor","extract/read failed",e);}
     }
 
     public static boolean extract(Type type, Context context, String assetFile, File destination) {
@@ -112,7 +112,7 @@ public abstract class TarCompressorUtils {
         try {
             return extract(type, context.getAssets().open(assetFile), destination, onExtractFileListener);
         }
-        catch (IOException e) {
+        catch (IOException e) { android.util.Log.e("TarCompressor","extract/read failed",e);
             return false;
         }
     }
@@ -126,7 +126,7 @@ public abstract class TarCompressorUtils {
         try {
             return extract(type, context.getContentResolver().openInputStream(source), destination, onExtractFileListener);
         }
-        catch (FileNotFoundException e) {
+        catch (FileNotFoundException e) { android.util.Log.e("TarCompressor","extract/read failed",e);
             return false;
         }
     }
@@ -140,7 +140,7 @@ public abstract class TarCompressorUtils {
         try {
             return extract(type, new BufferedInputStream(new FileInputStream(source), StreamUtils.BUFFER_SIZE), destination, onExtractFileListener);
         }
-        catch (FileNotFoundException e) {
+        catch (FileNotFoundException e) { android.util.Log.e("TarCompressor","extract/read failed",e);
             return false;
         }
     }
@@ -177,7 +177,7 @@ public abstract class TarCompressorUtils {
             }
             return true;
         }
-        catch (IOException e) {
+        catch (IOException e) { android.util.Log.e("TarCompressor","extract/read failed",e);
             return false;
         }
     }
@@ -222,7 +222,7 @@ public abstract class TarCompressorUtils {
             }
             return null;
         }
-        catch (IOException e) {
+        catch (IOException e) { android.util.Log.e("TarCompressor","extract/read failed",e);
             return null;
         }
     }
