@@ -15,6 +15,8 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.Toast;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -41,6 +43,8 @@ import com.winlator.contentdialog.AudioDriverConfigDialog;
 import com.winlator.contentdialog.ContentDialog;
 import com.winlator.contentdialog.VortekConfigDialog;
 import com.winlator.core.AppUtils;
+import com.winlator.core.ZipUtils;
+import com.winlator.core.GeneralComponents;
 import com.winlator.core.Callback;
 import com.winlator.container.DXWrapperPicker;
 import com.winlator.core.EnvVars;
@@ -58,6 +62,7 @@ import com.winlator.widget.CPUListView;
 import com.winlator.widget.ColorPickerView;
 import com.winlator.widget.EnvVarsView;
 import com.winlator.widget.FrameRating;
+import com.winlator.widget.TaggedSelectionBox;
 import com.winlator.widget.ImagePickerView;
 import com.winlator.widget.SeekBar;
 import com.winlator.win32.MSLogFont;
@@ -144,6 +149,13 @@ public class ContainerDetailFragment extends Fragment {
         String selectedDXWrapper = isEditMode() ? container.getDXWrapper() : Container.DEFAULT_DXWRAPPER;
         DXWrapperPicker dxwrapperPicker = new DXWrapperPicker(view.findViewById(R.id.LLDXWrapper), graphicsDriverPicker, selectedDXWrapper, oldDXWrapperConfig);
 
+        final Button waelPresetButton = new Button(context);
+        waelPresetButton.setText("Apply Wael Wrapper v1");
+        ViewGroup graphicsParent = (ViewGroup)view.findViewById(R.id.LLGraphicsDriver).getParent();
+        int graphicsIndex = graphicsParent.indexOfChild(view.findViewById(R.id.LLGraphicsDriver));
+        graphicsParent.addView(waelPresetButton, graphicsIndex + 1,
+                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
         view.findViewById(R.id.BTHelpDXWrapper).setOnClickListener((v) -> AppUtils.showHelpBox(context, v, R.string.dxwrapper_help_content));
 
         Spinner sAudioDriver = view.findViewById(R.id.SAudioDriver);
@@ -165,6 +177,58 @@ public class ContainerDetailFragment extends Fragment {
 
         final Spinner sBox64Preset = view.findViewById(R.id.SBox64Preset);
         Box64PresetManager.loadSpinner(sBox64Preset, isEditMode() ? container.getBox64Preset() : preferences.getString("box64_preset", Box64Preset.DEFAULT));
+
+        waelPresetButton.setOnClickListener(button -> {
+            Spinner screenSpinner = view.findViewById(R.id.SScreenSize);
+            screenSpinner.setSelection(0);
+            ((EditText)view.findViewById(R.id.ETScreenWidth)).setText("1280");
+            ((EditText)view.findViewById(R.id.ETScreenHeight)).setText("720");
+
+            LinearLayout graphics = view.findViewById(R.id.LLGraphicsDriver);
+            TaggedSelectionBox vulkanBox = (TaggedSelectionBox)graphics.getChildAt(0);
+            vulkanBox.setSelectedItem("Vortek");
+            KeyValueSet vulkanConfig = new KeyValueSet(vulkanBox.getTag());
+
+            final String panvkName = "PanVK Mali Bifrost-Valhall (kbase) (Mesa 27.0.0-devel r8)";
+            File driverRoot = GeneralComponents.getComponentDir(
+                    GeneralComponents.Type.ADRENOTOOLS_DRIVER, context);
+            File panvkDir = new File(driverRoot, panvkName);
+
+            boolean panvkInstalled =
+                    new File(panvkDir, "meta.json").isFile() &&
+                    new File(panvkDir, "libvulkan_panfrost.so").isFile();
+
+            if (!panvkInstalled) {
+                if (panvkDir.exists() && !panvkDir.isDirectory()) {
+                    panvkDir.delete();
+                }
+                if (!panvkDir.exists()) {
+                    panvkDir.mkdirs();
+                }
+
+                ZipUtils.extract(context,
+                        "graphics_driver/mali-panvk-27.0.0-devel-r8.zip",
+                        panvkDir);
+
+                panvkInstalled =
+                        new File(panvkDir, "meta.json").isFile() &&
+                        new File(panvkDir, "libvulkan_panfrost.so").isFile();
+            }
+            vulkanConfig.put("adrenotoolsDriver", panvkInstalled ? panvkName : "System");
+            vulkanBox.setTag(vulkanConfig.toString());
+
+            LinearLayout dxLayout = view.findViewById(R.id.LLDXWrapper);
+            TaggedSelectionBox dxvkBox = (TaggedSelectionBox)dxLayout.getChildAt(0);
+            dxvkBox.setSelectedItem("DXVK");
+            KeyValueSet dxvkConfig = new KeyValueSet(dxvkBox.getTag());
+            dxvkConfig.put("version", "2.4.1");
+            dxvkBox.setTag(dxvkConfig.toString());
+
+            Box64PresetManager.loadSpinner(sBox64Preset, Box64Preset.PERFORMANCE);
+            Toast.makeText(context, panvkInstalled ?
+                    "Wael preset applied. PanVK selected; test Vulkan before gaming." :
+                    "Wael preset applied. PanVK not installed; using Vortek/System.", Toast.LENGTH_LONG).show();
+        });
 
         final CPUListView cpuListView = view.findViewById(R.id.CPUListView);
         final CPUListView cpuListViewWoW64 = view.findViewById(R.id.CPUListViewWoW64);
