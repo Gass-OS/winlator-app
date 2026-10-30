@@ -35,6 +35,7 @@
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/main_menu_header"
         app:itemIconTint="@null"
+        app:itemIconSize="32dp"
         app:itemTextColor="?attr/colorPrimaryText"
         android:background="?attr/colorPrimarySurface"
         app:menu="@menu/main_menu"/>
