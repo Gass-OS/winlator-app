@@ -130,7 +130,7 @@ public class SettingsFragment extends Fragment {
         loadBox64PresetSpinner(view, sBox64Preset);
 
         final RadioGroup rgAppTheme = view.findViewById(R.id.RGAppTheme);
-        final int oldAppThemeId = preferences.getInt("app_theme", APP_THEME_DARK) == APP_THEME_DARK ? R.id.RBDark : R.id.RBLight;
+        final int oldAppThemeId = R.id.RBDark;
         rgAppTheme.check(oldAppThemeId);
 
         final CheckBox cbMoveCursorToTouchpoint = view.findViewById(R.id.CBMoveCursorToTouchpoint);
@@ -248,8 +248,9 @@ public class SettingsFragment extends Fragment {
             }
             else editor.remove("gamepad_model");
 
-            int newAppThemeId = rgAppTheme.getCheckedRadioButtonId();
-            editor.putInt("app_theme", newAppThemeId == R.id.RBLight ? APP_THEME_LIGHT : APP_THEME_DARK);
+            int newAppThemeId = R.id.RBDark;
+            rgAppTheme.check(R.id.RBDark);
+            editor.putInt("app_theme", APP_THEME_DARK);
 
             int newLCIndex = sLanguage.getSelectedItemPosition();
             editor.putInt("lc_index", newLCIndex);
