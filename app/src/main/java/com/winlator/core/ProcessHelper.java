@@ -74,7 +74,9 @@ public abstract class ProcessHelper {
             if (debugCallbacks.isEmpty()) processBuilder.redirectOutput(new File("/dev/null")).redirectErrorStream(true);
 
             Map<String, String> environment = processBuilder.environment();
-            for (String name : envVars) environment.put(name, envVars.get(name));
+            if (envVars != null) {
+                for (String name : envVars) environment.put(name, envVars.get(name));
+            }
 
             java.lang.Process process = processBuilder.start();
             Field pidField = process.getClass().getDeclaredField("pid");
@@ -89,7 +91,11 @@ public abstract class ProcessHelper {
 
             if (terminationCallback != null) createWaitForThread(process, terminationCallback);
         }
-        catch (Exception e) {}
+        catch (Exception e) {
+            android.util.Log.e("ProcessHelper",
+                    "Failed to launch command: " + command
+                            + ", workingDir=" + workingDir, e);
+        }
         return pid;
     }
 
