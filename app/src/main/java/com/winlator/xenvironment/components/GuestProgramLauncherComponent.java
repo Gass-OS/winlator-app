@@ -107,12 +107,53 @@ public class GuestProgramLauncherComponent extends EnvironmentComponent {
 
         String command = rootDir+"/usr/local/bin/box64 "+guestExecutable;
 
+        final String diagLib = rootFS.getLibDir().getPath();
+        final String diagCmd = command;
+        new Thread(() -> writeLaunchDiag(rootDir, diagCmd, diagLib)).start();
+
         return ProcessHelper.exec(command, envVars, rootDir, (status) -> {
             synchronized (lock) {
                 pid = -1;
             }
             if (terminationCallback != null) terminationCallback.call(status);
         });
+    }
+
+    private void writeLaunchDiag(File rootDir, String command, String libDir) {
+        StringBuilder sb = new StringBuilder();
+        try {
+            android.content.Context ctx = environment.getContext();
+            sb.append("time=").append(new java.util.Date()).append("\n");
+            sb.append("sdk=").append(android.os.Build.VERSION.SDK_INT).append(" targetSdk=").append(ctx.getApplicationInfo().targetSdkVersion).append("\n");
+            sb.append("rootDir=").append(rootDir).append(" isDir=").append(rootDir.isDirectory()).append("\n");
+            sb.append("command=").append(command).append("\n");
+            File box = new File(rootDir, "usr/local/bin/box64");
+            sb.append("box64 exists=").append(box.exists()).append(" len=").append(box.length()).append(" exec=").append(box.canExecute()).append("\n");
+            File wine = new File(rootDir, "opt/wine/bin/wine");
+            sb.append("wine exists=").append(wine.exists()).append(" exec=").append(wine.canExecute()).append("\n");
+            String[] l = new File(rootDir, "usr/local/bin").list();
+            sb.append("usr/local/bin=").append(l == null ? "MISSING" : java.util.Arrays.toString(l)).append("\n");
+            try {
+                ProcessBuilder pb = new ProcessBuilder(box.getPath(), "--version");
+                pb.environment().put("LD_LIBRARY_PATH", libDir);
+                pb.redirectErrorStream(true);
+                Process p = pb.start();
+                java.io.BufferedReader r = new java.io.BufferedReader(new java.io.InputStreamReader(p.getInputStream()));
+                String line; int n = 0;
+                while ((line = r.readLine()) != null && n++ < 20) sb.append("box64> ").append(line).append("\n");
+                p.waitFor();
+                sb.append("box64 --version exit=").append(p.exitValue()).append("\n");
+            }
+            catch (Throwable t) { sb.append("box64 test FAILED: ").append(t).append("\n"); }
+        }
+        catch (Throwable t) { sb.append("diag failed: ").append(t).append("\n"); }
+        try {
+            File out = new File(android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS), "winehub-launch-diag.txt");
+            java.io.FileWriter w = new java.io.FileWriter(out);
+            w.write(sb.toString());
+            w.close();
+        }
+        catch (Throwable t) { android.util.Log.e("WineHubDiag", "cannot write diag", t); }
     }
 
     private void extractBox64File() {
