@@ -40,16 +40,16 @@
     </style>
     <style name="AppThemeDark" parent="@style/AppThemeBase">
         <item name="android:windowBackground">@drawable/winehub_cosmic_background</item>
-        <item name="colorAccent">#FF8A24</item>
-        <item name="colorPrimary">#B921151D</item>
-        <item name="colorPrimaryDark">#07080D</item>
-        <item name="colorControlNormal">#B4A6B5</item>
-        <item name="colorPrimaryText">#FFF7F0</item>
-        <item name="colorSecondaryText">#A3A0B2</item>
-        <item name="colorPrimarySurface">#CC080910</item>
-        <item name="colorSecondarySurface">#D617141E</item>
-        <item name="colorPrimaryVariant">#FF8A24</item>
-        <item name="colorSecondaryVariant">#3B2635</item>
+        <item name="colorAccent">#FFFF294F</item>
+        <item name="colorPrimary">#66090012</item>
+        <item name="colorPrimaryDark">#050507</item>
+        <item name="colorControlNormal">#FFD1D5E0</item>
+        <item name="colorPrimaryText">#FFFFFFFF</item>
+        <item name="colorSecondaryText">#FFC0C2CC</item>
+        <item name="colorPrimarySurface">#33080910</item>
+        <item name="colorSecondarySurface">#4420000A</item>
+        <item name="colorPrimaryVariant">#FFFF294F</item>
+        <item name="colorSecondaryVariant">#5A0015</item>
         <item name="colorError">#ef5350</item>
         <item name="popupMenuBackground">@drawable/content_dialog_background_dark</item>
         <item name="toolboxBackground">@drawable/toolbox_dark</item>

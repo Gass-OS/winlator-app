@@ -41,9 +41,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="Created by Aymen Gharsalli • GASS-OS"
+                    android:text="Aymen Gharsalli • GASS-OS"
                     android:textSize="12sp"
                     android:textStyle="bold"
+                    android:textColor="?attr/colorSecondaryText" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Systems &amp; Embedded Software Engineer"
+                    android:textSize="11sp"
                     android:textColor="?attr/colorSecondaryText" />
 
                 <TextView

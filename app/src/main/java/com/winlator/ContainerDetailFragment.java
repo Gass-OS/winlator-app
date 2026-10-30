@@ -386,7 +386,10 @@ public class ContainerDetailFragment extends Fragment {
 
         WineThemeManager.ThemeInfo desktopTheme = new WineThemeManager.ThemeInfo(isEditMode() ? container.getDesktopTheme() : WineThemeManager.DEFAULT_DESKTOP_THEME);
         RadioGroup rgDesktopTheme = view.findViewById(R.id.RGDesktopTheme);
-        rgDesktopTheme.check(desktopTheme.theme == WineThemeManager.Theme.LIGHT ? R.id.RBLight : R.id.RBDark);
+        int selectedThemeId = R.id.RBDark;
+        if (desktopTheme.theme == WineThemeManager.Theme.LIGHT) selectedThemeId = R.id.RBLight;
+        else if (desktopTheme.theme == WineThemeManager.Theme.WINE_HUB) selectedThemeId = R.id.RBWineHub;
+        rgDesktopTheme.check(selectedThemeId);
         final ImagePickerView ipvDesktopBackgroundImage = view.findViewById(R.id.IPVDesktopBackgroundImage);
         ipvDesktopBackgroundImage.setSelectedSource(desktopTheme.wallpaperId);
         final ColorPickerView cpvDesktopBackgroundColor = view.findViewById(R.id.CPVDesktopBackgroundColor);
@@ -453,12 +456,19 @@ public class ContainerDetailFragment extends Fragment {
         RadioGroup rgDesktopTheme = view.findViewById(R.id.RGDesktopTheme);
         ImagePickerView ipvDesktopBackgroundImage = view.findViewById(R.id.IPVDesktopBackgroundImage);
         ColorPickerView cpvDesktopBackground = view.findViewById(R.id.CPVDesktopBackgroundColor);
-        WineThemeManager.Theme theme = rgDesktopTheme.getCheckedRadioButtonId() == R.id.RBLight ? WineThemeManager.Theme.LIGHT : WineThemeManager.Theme.DARK;
+        int checkedThemeId = rgDesktopTheme.getCheckedRadioButtonId();
+        WineThemeManager.Theme theme = checkedThemeId == R.id.RBLight
+                ? WineThemeManager.Theme.LIGHT
+                : checkedThemeId == R.id.RBWineHub
+                ? WineThemeManager.Theme.WINE_HUB
+                : WineThemeManager.Theme.DARK;
 
        String desktopTheme = theme+","+type+","+cpvDesktopBackground.getColorAsString();
         if (type == WineThemeManager.BackgroundType.IMAGE) {
             String selectedSource = ipvDesktopBackgroundImage.getSelectedSource();
-            String wallpaperId = !selectedSource.equals(WineThemeManager.DEFAULT_WALLPAPER_ID) && selectedSource.startsWith("wallpaper-") ? selectedSource : "0";
+            String wallpaperId = theme == WineThemeManager.Theme.WINE_HUB
+                    ? "wallpaper-4"
+                    : (!selectedSource.equals(WineThemeManager.DEFAULT_WALLPAPER_ID) && selectedSource.startsWith("wallpaper-") ? selectedSource : "0");
             File userWallpaperFile = WineThemeManager.getUserWallpaperFile(getContext());
             desktopTheme += ","+(userWallpaperFile.isFile() && selectedSource.equals("user-wallpaper") ? userWallpaperFile.lastModified() : wallpaperId);
         }

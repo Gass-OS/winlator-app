@@ -35,7 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="WINDOWS ON ANDROID"
+            android:text="WINDOWS APPS • ARM64 ANDROID"
             android:textColor="#FF8A24"
             android:textSize="10sp"
             android:letterSpacing="0.10" />
@@ -44,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="by GASS-OS"
+            android:text="GASS-OS  •  BY AYMEN GHARSALLI"
             android:textColor="#A3A0B2"
             android:textSize="12sp" />
     </LinearLayout>

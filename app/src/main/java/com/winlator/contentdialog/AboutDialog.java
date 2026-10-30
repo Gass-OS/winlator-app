@@ -19,7 +19,11 @@ public class AboutDialog extends ContentDialog {
             final PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
 
             TextView tvWebpage = findViewById(R.id.TVWebpage);
-            tvWebpage.setText(Html.fromHtml("<a href=\"https://github.com/Gass-OS/WINE-HUB\">WINE-HUB on GitHub</a>", Html.FROM_HTML_MODE_LEGACY));
+            tvWebpage.setText(Html.fromHtml(
+                "<a href=\"https://github.com/Gass-OS\">GASS-OS on GitHub</a>"
+                + " &bull; <a href=\"https://github.com/Gass-OS/WINE-HUB\">WINE-HUB</a>"
+                + " &bull; <a href=\"https://github.com/Gass-OS/GassNative-\">GassNative</a>",
+                Html.FROM_HTML_MODE_LEGACY));
             tvWebpage.setMovementMethod(LinkMovementMethod.getInstance());
 
             ((TextView)findViewById(R.id.TVAppVersion)).setText(context.getString(R.string.version)+" "+pInfo.versionName);
@@ -27,6 +31,9 @@ public class AboutDialog extends ContentDialog {
             String creditsAndThirdPartyAppsHTML = String.join("<br />",
                 "<b>WINE-HUB</b> by <a href=\"https://github.com/Gass-OS/WINE-HUB\">GASS-OS</a>",
                 "Created by <b>Aymen Gharsalli</b>",
+                "<b>Systems &amp; Embedded Software Engineer</b> &bull; Independent Developer",
+                "Focus: Linux, Android, ARM64 and native systems",
+                "Developer profile: <a href=\"https://github.com/Gass-OS\">github.com/Gass-OS</a>",
                 "WINE-HUB is a GASS-OS project for running Windows apps and games on Android",
                 "Built on the open-source <a href=\"https://www.winlator.org\">Winlator</a> project",
                 "Project: <a href=\"https://github.com/Gass-OS/WINE-HUB/releases\">Releases and updates</a>",

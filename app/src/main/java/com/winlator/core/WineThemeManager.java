@@ -19,7 +19,7 @@ import org.json.JSONObject;
 import java.io.File;
 
 public abstract class WineThemeManager {
-    public enum Theme {LIGHT, DARK}
+    public enum Theme {LIGHT, DARK, WINE_HUB}
     public enum BackgroundType {IMAGE, COLOR}
     public static final String DEFAULT_DESKTOP_THEME = Theme.LIGHT+","+BackgroundType.IMAGE+",#0277bd";
     public static final String DEFAULT_WALLPAPER_ID = "wallpaper-1";
@@ -124,6 +124,39 @@ public abstract class WineThemeManager {
                 registryEditor.setStringValue("Control Panel\\Colors", "Window", "48 48 48");
                 registryEditor.setStringValue("Control Panel\\Colors", "WindowFrame", "0 0 0");
                 registryEditor.setStringValue("Control Panel\\Colors", "WindowText", "255 255 255");
+            }
+            else if (themeInfo.theme == Theme.WINE_HUB) {
+                // WINE-HUB: graphite surfaces with crimson highlights.
+                registryEditor.setStringValue("Control Panel\\Colors", "ActiveBorder", "58 18 31");
+                registryEditor.setStringValue("Control Panel\\Colors", "ActiveTitle", "12 7 10");
+                registryEditor.setStringValue("Control Panel\\Colors", "Background", background);
+                registryEditor.setStringValue("Control Panel\\Colors", "ButtonAlternateFace", "27 15 20");
+                registryEditor.setStringValue("Control Panel\\Colors", "ButtonDkShadow", "3 3 5");
+                registryEditor.setStringValue("Control Panel\\Colors", "ButtonFace", "20 15 19");
+                registryEditor.setStringValue("Control Panel\\Colors", "ButtonHilight", "83 28 43");
+                registryEditor.setStringValue("Control Panel\\Colors", "ButtonLight", "48 23 32");
+                registryEditor.setStringValue("Control Panel\\Colors", "ButtonShadow", "8 6 9");
+                registryEditor.setStringValue("Control Panel\\Colors", "ButtonText", "245 241 244");
+                registryEditor.setStringValue("Control Panel\\Colors", "GradientActiveTitle", "115 12 39");
+                registryEditor.setStringValue("Control Panel\\Colors", "GradientInactiveTitle", "25 14 19");
+                registryEditor.setStringValue("Control Panel\\Colors", "GrayText", "158 148 154");
+                registryEditor.setStringValue("Control Panel\\Colors", "Hilight", "190 20 55");
+                registryEditor.setStringValue("Control Panel\\Colors", "HilightText", "255 255 255");
+                registryEditor.setStringValue("Control Panel\\Colors", "HotTrackingColor", "255 41 79");
+                registryEditor.setStringValue("Control Panel\\Colors", "InactiveBorder", "30 17 23");
+                registryEditor.setStringValue("Control Panel\\Colors", "InactiveTitle", "15 10 13");
+                registryEditor.setStringValue("Control Panel\\Colors", "InactiveTitleText", "184 174 180");
+                registryEditor.setStringValue("Control Panel\\Colors", "InfoText", "245 241 244");
+                registryEditor.setStringValue("Control Panel\\Colors", "InfoWindow", "24 15 19");
+                registryEditor.setStringValue("Control Panel\\Colors", "Menu", "13 9 12");
+                registryEditor.setStringValue("Control Panel\\Colors", "MenuBar", "24 13 18");
+                registryEditor.setStringValue("Control Panel\\Colors", "MenuHilight", "190 20 55");
+                registryEditor.setStringValue("Control Panel\\Colors", "MenuText", "245 241 244");
+                registryEditor.setStringValue("Control Panel\\Colors", "Scrollbar", "43 22 29");
+                registryEditor.setStringValue("Control Panel\\Colors", "TitleText", "255 255 255");
+                registryEditor.setStringValue("Control Panel\\Colors", "Window", "17 12 15");
+                registryEditor.setStringValue("Control Panel\\Colors", "WindowFrame", "3 3 5");
+                registryEditor.setStringValue("Control Panel\\Colors", "WindowText", "245 241 244");
             }
         }
     }
