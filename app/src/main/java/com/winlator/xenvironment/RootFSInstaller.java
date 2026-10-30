@@ -79,7 +79,16 @@ public abstract class RootFSInstaller {
 
     public static void installIfNeeded(final MainActivity activity) {
         RootFS rootFS = RootFS.find(activity);
-        if (!rootFS.isValid() || rootFS.getVersion() < LATEST_VERSION) install(activity);
+        File wineExecutable = new File(rootFS.getRootDir(), "opt/wine/bin/wine");
+        boolean wineMissing = !wineExecutable.isFile();
+
+        if (!rootFS.isValid() || rootFS.getVersion() < LATEST_VERSION || wineMissing) {
+            android.util.Log.i("RootFSInstaller",
+                "Repairing system files: valid=" + rootFS.isValid() +
+                ", version=" + rootFS.getVersion() +
+                ", wineMissing=" + wineMissing);
+            install(activity);
+        }
     }
 
     private static void clearOptDir(File optDir) {

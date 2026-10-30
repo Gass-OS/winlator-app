@@ -51,7 +51,6 @@ import com.winlator.core.FileUtils;
 import com.winlator.core.GeneralComponents;
 import com.winlator.core.KeyValueSet;
 import com.winlator.core.LocaleHelper;
-import com.winlator.core.PreloaderDialog;
 import com.winlator.core.ProcessHelper;
 import com.winlator.core.StringUtils;
 import com.winlator.core.TarCompressorUtils;
@@ -146,7 +145,6 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         setContentView(R.layout.xserver_display_activity);
         ForegroundService.startSession(this);
 
-        final PreloaderDialog preloaderDialog = new PreloaderDialog(this);
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean useAndroidClipboardOnWine = preferences.getBoolean("use_android_clipboard_on_wine", false);
         clipboardManager = useAndroidClipboardOnWine ? (ClipboardManager)getSystemService(CLIPBOARD_SERVICE) : null;
@@ -172,7 +170,6 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
 
             boolean wineprefixNeedsUpdate = container.getExtra("wineprefixNeedsUpdate").equals("t");
             if (wineprefixNeedsUpdate) {
-                preloaderDialog.show(R.string.updating_system_files);
                 WineUtils.updateWineprefix(this, (status) -> {
                     if (status == 0) {
                         container.putExtra("wineprefixNeedsUpdate", null);
@@ -230,7 +227,6 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
             this.dxwrapperConfig = DXWrappers.parseConfigs(dxwrapper, dxwrapperConfig);
         }
 
-        preloaderDialog.show(R.string.starting_up);
 
         inputControlsManager = new InputControlsManager(this);
         xServer = new XServer(this, screenInfo);
@@ -246,7 +242,6 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
             public void onMapWindow(Window window) {
                 if (!flags[0] && window.isRenderable() && !window.getClassName().isEmpty()) {
                     xServerView.getRenderer().setCursorVisible(true);
-                    preloaderDialog.closeOnUiThread();
                     flags[0] = true;
                 }
 
@@ -270,15 +265,12 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         Executors.newSingleThreadExecutor().execute(() -> {
             try {
                 if (!isGenerateWineprefix()) {
-                    preloaderDialog.setMessageOnUiThread(R.string.updating_system_files);
                     setupWineSystemFiles();
 
-                    preloaderDialog.setMessageOnUiThread(R.string.starting_up);
                     extractGraphicsDriverFiles();
                     changeWineAudioDriver();
                 }
 
-                preloaderDialog.setMessageOnUiThread(R.string.starting_up);
                 setupXEnvironment();
             }
             catch (Exception | LinkageError error) {
@@ -297,7 +289,6 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
                 }
 
                 runOnUiThread(() -> {
-                    preloaderDialog.close();
 
                     String detail = error.getMessage();
                     if (detail == null || detail.trim().isEmpty()) {
