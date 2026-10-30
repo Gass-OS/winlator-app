@@ -137,7 +137,7 @@ public class GuestProgramLauncherComponent extends EnvironmentComponent {
                 ProcessBuilder pb = new ProcessBuilder(box.getPath(), "--version");
                 pb.environment().put("LD_LIBRARY_PATH", libDir);
                 pb.redirectErrorStream(true);
-                Process p = pb.start();
+                java.lang.Process p = pb.start();
                 java.io.BufferedReader r = new java.io.BufferedReader(new java.io.InputStreamReader(p.getInputStream()));
                 String line; int n = 0;
                 while ((line = r.readLine()) != null && n++ < 20) sb.append("box64> ").append(line).append("\n");
